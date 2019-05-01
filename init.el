@@ -53,7 +53,6 @@
     "b" 'helm-mini
     "f" 'helm-find-files
     "n" 'rename-buffer
-    "n" 'rename-buffer
     "gs" 'magit-status
     "k" (lambda () (interactive) (kill-buffer nil))
     "r" (lambda() (interactive) (load-file "~/.emacs.d/init.el"))
