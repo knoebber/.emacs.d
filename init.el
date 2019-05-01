@@ -22,19 +22,25 @@
 (setq package-enable-at-startup nil)
 (package-initialize)
 
-;; Setup use-packge
+;; Setup use-package
 ;; https://github.com/jwiegley/use-package
 (eval-when-compile (require 'use-package))
 
 ;; Always download packages that are not found
 (setq use-package-always-ensure t)
 
+;; Sync emacs path and shell path
+(use-package exec-path-from-shell
+  :config
+  (when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize)))
+  
 ;; Setup helm
 (use-package helm
   :config
-    (require 'helm-config)
-    (helm-mode 1)
-    (helm-autoresize-mode t))
+  (require 'helm-config)
+  (helm-mode 1)
+  (helm-autoresize-mode t))
 
 ;; Setup magit
 (use-package magit)
@@ -53,6 +59,7 @@
     "b" 'helm-mini
     "f" 'helm-find-files
     "n" 'rename-buffer
+    "o" 'other-window
     "gs" 'magit-status
     "k" (lambda () (interactive) (kill-buffer nil))
     "r" (lambda() (interactive) (load-file "~/.emacs.d/init.el"))
@@ -63,8 +70,8 @@
 ;; Setup evil
 (use-package evil
   :config 
-    (require 'evil)
-    (evil-mode t))
+  (require 'evil)
+  (evil-mode t))
 
 '(package-selected-packages (quote (evil-visual-mark-mode)))
 (custom-set-faces
@@ -81,7 +88,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (spaceline spacemacs-theme use-package helm evil-visual-mark-mode))))
+    (exec-path-from-shell spaceline spacemacs-theme use-package helm evil-visual-mark-mode))))
 
 ;; Setup origami
 (use-package origami
@@ -103,6 +110,39 @@
 (use-package go-mode)
 (add-hook 'before-save-hook 'gofmt-before-save)
 
+;; Setup webmode
+(use-package web-mode
+  :config
+  (require `web-mode)
+  (add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode)))
+
+(defun my-web-mode-hook ()
+  ;; Hooks for Web mode
+  (setq-default indent-tabs-mode nil)
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-code-indent-offset 2))
+
+(add-hook 'web-mode-hook  'my-web-mode-hook)
+
+;; Setup linting
+(use-package flycheck
+  :config
+  (require `flycheck))
+
+;; Turn on flycheck on for web-mode
+(add-hook 'web-mode-hook #'flycheck-mode)
+
+;; Disable default linter
+(setq-default flycheck-disabled-checkers (append flycheck-disabled-checkers '(javascript-jshint json-jsonlist)))
+
+;; Use eslint with web-mode for jsx files
+(flycheck-add-mode 'javascript-eslint 'web-mode)
+
+;; Use eslint file from local project folder
+(use-package add-node-modules-path)
+(eval-after-load 'web-mode
+  '(add-hook 'web-mode-hook #'add-node-modules-path))
+  
 ;; General config
 (show-paren-mode 1)
 (menu-bar-mode -1)
