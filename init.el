@@ -1,20 +1,22 @@
-;; Getting started with emacs.
-;; 04/30/2019
-;; Cx-Cc: quit
-;; Cx-cf find file
-;; M-x Execute command
-;; C-g cancel
-;; Cx-k Kill buffer
-;; C-x C-s Save the current buffer
-;; C-x s Save all buffers
-;; C-h ? help
-;; C-h k - help about a hotkey combo
-;; C-h f - help for a function
-;; M-j Start a new line with a comment
-;; To install config
-;; list-package RET package-install use-package RET
-;; emacs-helm: C-j to autocomplete candidate
+;;; init.el --- Summary: Emacs
+;;; Commentary:
+;;; 04/30/2019
+;;; Cx-Cc: quit
+;;; Cx-cf find file
+;;; M-x Execute command
+;;; C-g cancel
+;;; Cx-k Kill buffer
+;;; C-x C-s Save the current buffer
+;;; C-x s Save all buffers
+;;; C-h ? help
+;;; C-h k - help about a hotkey combo
+;;; C-h f - help for a function
+;;; M-j Start a new line with a comment
+;;; To install config
+;;; list-package RET package-install use-package RET
+;;; emacs-helm: C-j to autocomplete candidate
 
+;;; Code:
 (require 'package)
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
@@ -60,7 +62,7 @@
     "f" 'helm-find-files
     "n" 'rename-buffer
     "o" 'other-window
-    "gs" 'magit-status
+    "g" 'magit-status
     "k" (lambda () (interactive) (kill-buffer nil))
     "r" (lambda() (interactive) (load-file "~/.emacs.d/init.el"))
     "e" (lambda() (interactive) (find-file "~/.emacs.d/init.el"))
@@ -69,7 +71,7 @@
 
 ;; Setup evil
 (use-package evil
-  :config 
+  :config
   (require 'evil)
   (evil-mode t))
 
@@ -107,45 +109,34 @@
   (spaceline-emacs-theme))
 
 ;; Setup golang support
-(use-package go-mode)
-(add-hook 'before-save-hook 'gofmt-before-save)
+(use-package go-mode
+  :init
+  (add-hook 'before-save-hook 'gofmt-before-save))
 
 ;; Setup webmode
 (use-package web-mode
-  :config
-  (require `web-mode)
-  (add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode)))
+  :mode "\\.jsx?\\'"
+  :init
+  (defun my-web-mode-hook ()
+    ;; Hooks for Web mode
+    (setq-default indent-tabs-mode nil)
+    (setq web-mode-markup-indent-offset 2)
+    (setq web-mode-code-indent-offset 2))
+  (add-hook 'web-mode-hook  'my-web-mode-hook))
 
-(defun my-web-mode-hook ()
-  ;; Hooks for Web mode
-  (setq-default indent-tabs-mode nil)
-  (setq web-mode-markup-indent-offset 2)
-  (setq web-mode-code-indent-offset 2))
-
-(add-hook 'web-mode-hook  'my-web-mode-hook)
-
-;; Setup linting
+;; Setup linting with flycheck
+;; Use 'C-c ! v' to check flycheck status in buffer.
 (use-package flycheck
-  :config
-  (require `flycheck))
+  :init
+  (global-flycheck-mode)
+  (flycheck-add-mode 'javascript-eslint 'web-mode)
+  (flycheck-add-mode 'go-golint 'go-mode)
+  :diminish flycheck-mode)
 
-;; Turn on flycheck on for web-mode
-(add-hook 'web-mode-hook #'flycheck-mode)
-
-;; Disable default linter
-(setq-default flycheck-disabled-checkers (append flycheck-disabled-checkers '(javascript-jshint json-jsonlist)))
-
-;; Use eslint with web-mode for jsx files
-(flycheck-add-mode 'javascript-eslint 'web-mode)
-
-;; Use eslint file from local project folder
-(use-package add-node-modules-path)
-(eval-after-load 'web-mode
-  '(add-hook 'web-mode-hook #'add-node-modules-path))
-  
-;; General config
+;;; General config
 (show-paren-mode 1)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (toggle-scroll-bar -1)
 
+;;; init.el ends here
