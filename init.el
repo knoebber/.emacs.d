@@ -60,9 +60,15 @@
     "x" 'helm-M-x
     "b" 'helm-mini
     "f" 'helm-find-files
+    "hk" 'describe-key
+    "hf" 'describe-function
     "n" 'rename-buffer
-    "o" 'other-window
+    "j" 'other-window
+    "vn" 'narrow-to-region
+    "vw" 'widen
+    "o" 'delete-other-windows
     "g" 'magit-status
+    ";" 'comment-line
     "k" (lambda () (interactive) (kill-buffer nil))
     "r" (lambda() (interactive) (load-file "~/.emacs.d/init.el"))
     "e" (lambda() (interactive) (find-file "~/.emacs.d/init.el"))
@@ -88,9 +94,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(line-number-mode nil)
  '(package-selected-packages
    (quote
-    (exec-path-from-shell spaceline spacemacs-theme use-package helm evil-visual-mark-mode))))
+    (company company-mode exec-path-from-shell spaceline spacemacs-theme use-package helm evil-visual-mark-mode))))
 
 ;; Setup origami
 (use-package origami
@@ -133,10 +140,20 @@
   (flycheck-add-mode 'go-golint 'go-mode)
   :diminish flycheck-mode)
 
+;; Setup auto completion
+(use-package company
+  :init
+  (global-company-mode))
+
 ;;; General config
 (show-paren-mode 1)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (toggle-scroll-bar -1)
+
+;;; Enable banned commands
+(put 'narrow-to-defun  'disabled nil)
+(put 'narrow-to-page   'disabled nil)
+(put 'narrow-to-region 'disabled nil)
 
 ;;; init.el ends here
