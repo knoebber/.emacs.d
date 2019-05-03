@@ -118,7 +118,9 @@
 ;; Setup golang support
 (use-package go-mode
   :init
-  (add-hook 'before-save-hook 'gofmt-before-save))
+  (add-hook 'before-save-hook 'gofmt-before-save)
+    :bind (("s-b" . godef-jump-other-window)))
+  
 
 ;; Setup webmode
 (use-package web-mode
