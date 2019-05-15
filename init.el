@@ -1,11 +1,7 @@
 ;;; init.el --- Summary: Emacs
 ;;; Commentary:
-;;; 04/30/2019
-;;; Cx-Cc: quit
-;;; Cx-cf find file
-;;; M-x Execute command
-;;; C-g cancel
-;;; Cx-k Kill buffer
+;;; First Emacs install date: 04/30/2019
+;;; Cx-Cc: quit Emacs
 ;;; C-x C-s Save the current buffer
 ;;; C-x s Save all buffers
 ;;; C-h ? help
@@ -58,7 +54,7 @@
   (evil-leader/set-key
     "RET" 'eshell
     "x" 'helm-M-x
-    "b" 'helm-mini
+    "b" 'helm-mini ;; In helm mini, use C-SPC to select buffers, M-D to kill all marked
     "f" 'helm-find-files
     "hk" 'describe-key
     "hf" 'describe-function
@@ -102,8 +98,7 @@
 ;; Setup origami
 (use-package origami
   :config
-  (require `origami)
-  (origami-mode))
+  (add-hook 'prog-mode-hook 'origami-mode))
 
 ;; Setup theme and powerline
 (use-package spacemacs-theme
@@ -137,10 +132,10 @@
 ;; Use 'C-c ! v' to check flycheck status in buffer.
 (use-package flycheck
   :init
-  (global-flycheck-mode)
+  (add-hook 'prog-mode-hook 'global-flycheck-mode)
   (flycheck-add-mode 'javascript-eslint 'web-mode)
-  (flycheck-add-mode 'go-golint 'go-mode)
-  :diminish flycheck-mode)
+  :config
+  (progn (setq-default flycheck-disabled-checkers '(go-mode go-golint))))
 
 ;; Setup auto completion
 (use-package company
