@@ -133,8 +133,8 @@
 (use-package flycheck
   :init
   (add-hook 'prog-mode-hook 'global-flycheck-mode)
-  (flycheck-add-mode 'javascript-eslint 'web-mode)
   :config
+  (flycheck-add-mode 'javascript-eslint 'web-mode)
   (progn (setq-default flycheck-disabled-checkers '(go-mode go-golint))))
 
 ;; Setup auto completion
