@@ -125,7 +125,8 @@
     ;; Hooks for Web mode
     (setq-default indent-tabs-mode nil)
     (setq web-mode-markup-indent-offset 2)
-    (setq web-mode-code-indent-offset 2))
+    (setq web-mode-code-indent-offset 2)
+    (setq web-mode-enable-auto-quoting nil))
   (add-hook 'web-mode-hook  'my-web-mode-hook))
 
 ;; Setup linting with flycheck
