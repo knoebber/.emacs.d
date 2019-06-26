@@ -38,7 +38,8 @@
   :config
   (require 'helm-config)
   (helm-mode 1)
-  (helm-autoresize-mode t))
+  (helm-autoresize-mode t)
+  (setq helm-buffer-max-length nil))
 
 ;; Setup magit
 (use-package magit)
@@ -65,6 +66,10 @@
     "o" 'delete-other-windows
     "g" 'magit-status
     ";" 'comment-line
+    "tt" 'go-test
+    "tf" 'go-run-current-test
+    "ts" 'go-run-current-sub-test
+    "tc" 'go-coverage-shorcut
     "k" (lambda () (interactive) (kill-buffer nil))
     "r" (lambda() (interactive) (load-file "~/.emacs.d/init.el"))
     "e" (lambda() (interactive) (find-file "~/.emacs.d/init.el"))
@@ -135,8 +140,7 @@
   :init
   (add-hook 'prog-mode-hook 'global-flycheck-mode)
   :config
-  (flycheck-add-mode 'javascript-eslint 'web-mode)
-  (progn (setq-default flycheck-disabled-checkers '(go-mode go-golint))))
+  (flycheck-add-mode 'javascript-eslint 'web-mode))
 
 ;; Setup auto completion
 (use-package company
@@ -153,5 +157,45 @@
 (put 'narrow-to-defun  'disabled nil)
 (put 'narrow-to-page   'disabled nil)
 (put 'narrow-to-region 'disabled nil)
+
+(defun insert-current-date ()
+    "Insert the current date."
+    (interactive)
+    (insert (shell-command-to-string "echo -n $(date +%Y-%m-%d)")))
+
+(defun go-test (pattern)
+  "Test a go functions matching PATTERN and generate a coverage file."
+  (interactive "Mgo test -run ")
+  (message pattern)
+  (eshell-command (concat "go test -run '" pattern "' -coverprofile=coverage.out")))
+
+(defun go-coverage-shorcut ()
+  "Run go-coverage with coverage.out ."
+  (interactive)
+  (go-coverage "coverage.out"))
+
+(defun go-current-function-name ()
+  "Get the name of the current go function the cursor is in."
+  (save-excursion
+    (re-search-backward "^func[[:space:]]\\(([^)]+)[[:space:]]\\)?\\([[:word:]]+\\)")
+    (match-string 2)))
+
+(defun go-sub-test-name ()
+  "Get the name of the current subtest that the cursor is in."
+  (save-excursion
+    (re-search-backward "t.Run(\"\\([[:word:][:space:]]+\\)")
+    (match-string 1)))
+
+
+(defun go-run-current-test ()
+  "Run the current top level go test."
+  (interactive)
+  (go-test (go-current-function-name)))
+
+(defun go-run-current-sub-test ()
+  "Run the current sub test."
+  (interactive)
+  (go-test (concat (go-current-function-name) "/" (go-sub-test-name))))
+
 
 ;;; init.el ends here
