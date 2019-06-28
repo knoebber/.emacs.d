@@ -166,8 +166,9 @@
 (defun go-test (pattern)
   "Test a go functions matching PATTERN and generate a coverage file."
   (interactive "Mgo test -run ")
-  (message pattern)
-  (eshell-command (concat "go test -run '" pattern "' -coverprofile=coverage.out")))
+  (let ((cmd (format "go test -run '%s' -coverprofile=coverage.out" pattern)))
+    (message cmd)
+    (eshell-command cmd)))
 
 (defun go-coverage-shorcut ()
   "Run go-coverage with coverage.out ."
