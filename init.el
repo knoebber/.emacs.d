@@ -66,10 +66,11 @@
     "o" 'delete-other-windows
     "g" 'magit-status
     ";" 'comment-line
-    "tt" 'go-test
+    "tt" 'go-test ;; TODO make go-* only available in go-mode.
     "tf" 'go-run-current-test
     "ts" 'go-run-current-sub-test
     "tc" 'go-coverage-shorcut
+    "ti" 'go-insert-subtest
     "k" (lambda () (interactive) (kill-buffer nil))
     "r" (lambda() (interactive) (load-file "~/.emacs.d/init.el"))
     "e" (lambda() (interactive) (find-file "~/.emacs.d/init.el"))
@@ -163,6 +164,11 @@
     (interactive)
     (insert (shell-command-to-string "echo -n $(date +%Y-%m-%d)")))
 
+(defun go-insert-subtest(name)
+  "Insert a subtest with NAME."
+  (interactive "Mtest name ")
+  (insert (format "\nt.Run(\"%s\", func(t *testing.T){\n})\n" name)))
+
 (defun go-test (pattern)
   "Test a go functions matching PATTERN and generate a coverage file."
   (interactive "Mgo test -run ")
@@ -176,7 +182,7 @@
   (go-coverage "coverage.out"))
 
 (defun go-current-function-name ()
-  "Get the name of the current go function the cursor is in."
+  "Get the name of the current go function the cursor is in.  Handles receivers."
   (save-excursion
     (re-search-backward "^func[[:space:]]\\(([^)]+)[[:space:]]\\)?\\([[:word:]]+\\)")
     (match-string 2)))
@@ -197,6 +203,8 @@
   "Run the current sub test."
   (interactive)
   (go-test (concat (go-current-function-name) "/" (go-sub-test-name))))
+
+;;;"^func[[:space:]]\\(Test.+\\)("
 
 
 ;;; init.el ends here
