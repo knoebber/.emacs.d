@@ -170,7 +170,7 @@
   (insert (format "\nt.Run(\"%s\", func(t *testing.T){\n})\n" name)))
 
 (defun go-test (pattern)
-  "Test a go functions matching PATTERN and generate a coverage file."
+  "Test go functions matching PATTERN and generate a coverage file."
   (interactive "Mgo test -run ")
   (let ((cmd (format "go test -run '%s' -coverprofile=coverage.out" pattern)))
     (message cmd)
@@ -182,7 +182,7 @@
   (go-coverage "coverage.out"))
 
 (defun go-current-function-name ()
-  "Get the name of the current go function the cursor is in.  Handles receivers."
+  "Get the name of the go function that the cursor is in.  Handles receivers."
   (save-excursion
     (re-search-backward "^func[[:space:]]\\(([^)]+)[[:space:]]\\)?\\([[:word:]]+\\)")
     (match-string 2)))
@@ -197,12 +197,12 @@
 (defun go-run-current-test ()
   "Run the current top level go test."
   (interactive)
-  (go-test (go-current-function-name)))
+  (go-test (concat (go-current-function-name) "\b")))
 
 (defun go-run-current-sub-test ()
   "Run the current sub test."
   (interactive)
-  (go-test (concat (go-current-function-name) "/" (go-sub-test-name))))
+  (go-test (concat (go-current-function-name) "\b/" (go-sub-test-name) "\b/")))
 
 ;;;"^func[[:space:]]\\(Test.+\\)("
 
