@@ -99,7 +99,7 @@
  '(line-number-mode nil)
  '(package-selected-packages
    (quote
-    (company company-mode exec-path-from-shell spaceline spacemacs-theme use-package helm evil-visual-mark-mode))))
+    (markdown-mode company company-mode exec-path-from-shell spaceline spacemacs-theme use-package helm evil-visual-mark-mode))))
 
 ;; Setup origami
 (use-package origami
@@ -134,6 +134,28 @@
     (setq web-mode-code-indent-offset 2)
     (setq web-mode-enable-auto-quoting nil))
   (add-hook 'web-mode-hook  'my-web-mode-hook))
+
+
+(defun compile-post ()
+  "Use a script from personal-website to compile a blog markdown file."
+  (interactive)
+  (string-match "\\([[:digit:]]\\)\.md" (buffer-name))
+  (shell-command (concat "create-post " (match-string 1 (buffer-name)))))
+
+(defun compile-blog-and-upload ()
+  "Use scripts from personal-website to compile and upload a blog post."
+  (interactive)
+  (string-match "\\([[:digit:]]\\)\.md" (buffer-name))
+  (shell-command (format "create-post %s && upload-site" (match-string 1 (buffer-name)))))
+
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode))
+  :bind (
+	 ("C-c m" . compile-post)
+	 ("C-c c" . compile-blog-and-upload)))
 
 ;; Setup linting with flycheck
 ;; Use 'C-c ! v' to check flycheck status in buffer.
@@ -203,6 +225,8 @@
   "Run the current sub test."
   (interactive)
   (go-test (concat (go-current-function-name) "\b/" (go-sub-test-name) "\b/")))
+
+
 
 ;;;"^func[[:space:]]\\(Test.+\\)("
 
