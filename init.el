@@ -83,24 +83,6 @@
   (require 'evil)
   (evil-mode t))
 
-'(package-selected-packages (quote (evil-visual-mark-mode)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(line-number-mode nil)
- '(package-selected-packages
-   (quote
-    (markdown-mode company company-mode exec-path-from-shell spaceline spacemacs-theme use-package helm evil-visual-mark-mode))))
-
 ;; Setup origami
 (use-package origami
   :config
@@ -135,28 +117,6 @@
     (setq web-mode-enable-auto-quoting nil))
   (add-hook 'web-mode-hook  'my-web-mode-hook))
 
-
-(defun compile-post ()
-  "Use a script from personal-website to compile a blog markdown file."
-  (interactive)
-  (string-match "\\([[:digit:]]\\)\.md" (buffer-name))
-  (shell-command (concat "create-post " (match-string 1 (buffer-name)))))
-
-(defun compile-blog-and-upload ()
-  "Use scripts from personal-website to compile and upload a blog post."
-  (interactive)
-  (string-match "\\([[:digit:]]\\)\.md" (buffer-name))
-  (shell-command (format "create-post %s && upload-site" (match-string 1 (buffer-name)))))
-
-(use-package markdown-mode
-  :ensure t
-  :commands (markdown-mode gfm-mode)
-  :mode (("README\\.md\\'" . gfm-mode)
-         ("\\.md\\'" . markdown-mode))
-  :bind (
-	 ("C-c m" . compile-post)
-	 ("C-c c" . compile-blog-and-upload)))
-
 ;; Setup linting with flycheck
 ;; Use 'C-c ! v' to check flycheck status in buffer.
 (use-package flycheck
@@ -170,6 +130,8 @@
   :init
   (global-company-mode))
 
+(use-package htmlize)
+
 ;;; General config
 (show-paren-mode 1)
 (menu-bar-mode -1)
@@ -180,6 +142,19 @@
 (put 'narrow-to-defun  'disabled nil)
 (put 'narrow-to-page   'disabled nil)
 (put 'narrow-to-region 'disabled nil)
+
+
+;;; Custom functions
+
+(defun publish-site ()
+  "Build nicolasknoebber.com."
+  (interactive)
+  ;; TODO: use :completion-function in alist to call s3 sync
+  (load-file "~/projects/personal-website/src/site.el")
+  (org-publish "personal-website" t))
+
+(define-key org-mode-map (kbd "C-c c") 'publish-site)
+
 
 (defun insert-current-date ()
     "Insert the current date."
@@ -227,8 +202,17 @@
   (go-test (concat (go-current-function-name) "\b/" (go-sub-test-name) "\b/")))
 
 
-
-;;;"^func[[:space:]]\\(Test.+\\)("
-
-
-;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (htmlize web-mode use-package spacemacs-theme spaceline origami helm go-mode flycheck exec-path-from-shell evil-visual-mark-mode evil-magit evil-leader company add-node-modules-path))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
