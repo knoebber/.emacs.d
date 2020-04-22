@@ -142,6 +142,14 @@
 (tool-bar-mode -1)
 (toggle-scroll-bar -1)
 
+;; Flash the modeline instead of ringing.
+(setq visible-bell nil
+      ring-bell-function 'flash-mode-line)
+(defun flash-mode-line ()
+  (invert-face 'mode-line)
+  (run-with-timer 0.1 nil #'invert-face 'mode-line))
+
+
 ;;; Enable banned commands
 (put 'narrow-to-defun  'disabled nil)
 (put 'narrow-to-page   'disabled nil)
@@ -161,7 +169,6 @@
   ;; TODO: use :completion-function in alist to call s3 sync
   (load-file "~/projects/personal-website/src/site.el")
   (org-publish "personal-website" t))
-
 
 (defun insert-current-date ()
     "Insert the current date."
@@ -208,15 +215,28 @@
   (interactive)
   (go-test (concat (go-current-function-name) "\b/" (go-sub-test-name) "\b/")))
 
+(setq newsticker-url-list
+      '(("EmacsWiki Recently Change" "http://www.emacswiki.org/cgi-bin/emacs?action=rss;showedit=1" nil nil nil)
+        ("Devin Dooley" "https://devinadooley.com/index.xml" nil nil nil)
+        ("Lobster's" "https://lobste.rs/newest.rss" nil nil nil)
+        ("CNN" "http://rss.cnn.com/rss/cnn_topstories.rss" nil nil nil)
+        ("The Intercept" "https://theintercept.com/feed/?rss" nil nil nil)
+        ("Julian Digital" "www.julian.digital/feed" nil nil nil)
+        ("Emacs Releases" "https://emacsformacosx.com/atom/release" nil nil nil)
+        ))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
+ '(line-number-mode nil)
  '(package-selected-packages
    (quote
-    (htmlize web-mode use-package spacemacs-theme spaceline origami helm go-mode flycheck exec-path-from-shell evil-visual-mark-mode evil-magit evil-leader company add-node-modules-path))))
+    (htmlize php-mode dockerfile-mode company company-mode exec-path-from-shell spaceline spacemacs-theme use-package helm evil-visual-mark-mode))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
