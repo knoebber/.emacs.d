@@ -102,12 +102,11 @@
 (use-package go-mode
   :init
   (add-hook 'before-save-hook 'gofmt-before-save)
-    :bind (("s-b" . godef-jump-other-window)))
-  
+  :bind (("s-b" . godef-jump-other-window)))
 
 ;; Setup webmode
 (use-package web-mode
-  :mode "\\.jsx?\\'"
+  :mode "\\.jsx?\\'" "\\.html\\'" "\\.php\\'" "\\.tmpl\\'"
   :init
   (defun my-web-mode-hook ()
     ;; Hooks for Web mode
@@ -116,6 +115,11 @@
     (setq web-mode-code-indent-offset 2)
     (setq web-mode-enable-auto-quoting nil))
   (add-hook 'web-mode-hook  'my-web-mode-hook))
+
+(setq web-mode-engines-alist
+      '(("php"    . "\\.phtml\\'")
+        ("go"  . "\\.tmpl\\."))
+)
 
 ;; Setup linting with flycheck
 ;; Use 'C-c ! v' to check flycheck status in buffer.
@@ -143,6 +147,11 @@
 (put 'narrow-to-page   'disabled nil)
 (put 'narrow-to-region 'disabled nil)
 
+;;; Don't save backup~ files in the same directory.
+(setq backup-directory-alist `(("." . "~/.emacs.d/backups")))
+
+;;; Set major modes.
+;;; (add-to-list 'auto-mode-alist '("\\.tmpl\\'" . mhtml-mode))
 
 ;;; Custom functions
 
@@ -152,8 +161,6 @@
   ;; TODO: use :completion-function in alist to call s3 sync
   (load-file "~/projects/personal-website/src/site.el")
   (org-publish "personal-website" t))
-
-(define-key org-mode-map (kbd "C-c c") 'publish-site)
 
 
 (defun insert-current-date ()
