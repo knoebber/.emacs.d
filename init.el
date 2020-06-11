@@ -55,6 +55,8 @@
     "RET" 'eshell
     "x" 'helm-M-x
     "b" 'helm-mini ;; In helm mini, use C-SPC to select buffers, M-D to kill all marked
+    "d" (lambda() (interactive) (load-theme 'spacemacs-dark))
+    "l" (lambda() (interactive) (load-theme 'spacemacs-light))
     "f" 'helm-find-files
     "hk" 'describe-key
     "hf" 'describe-function
@@ -70,7 +72,7 @@
     "ts" 'go-run-current-sub-test
     "tc" 'go-coverage-shorcut
     "ti" 'go-insert-subtest
-    "k" (lambda () (interactive) (kill-buffer nil))
+    "k" (lambda() (interactive) (kill-buffer nil))
     "r" (lambda() (interactive) (load-file "~/.emacs.d/init.el"))
     "e" (lambda() (interactive) (find-file "~/.emacs.d/init.el"))
     ;; C-i is tab
@@ -162,13 +164,6 @@
 
 ;;; Custom functions
 
-(defun publish-site ()
-  "Build nicolasknoebber.com."
-  (interactive)
-  ;; TODO: use :completion-function in alist to call s3 sync
-  (load-file "~/projects/personal-website/src/site.el")
-  (org-publish "personal-website" t))
-
 (defun insert-current-date ()
     "Insert the current date."
     (interactive)
@@ -214,15 +209,6 @@
   (interactive)
   (go-test (concat (go-current-function-name) "\b/" (go-sub-test-name) "\b/")))
 
-;; Compile org-mode:
-;; cd ~/packages
-;; git clone https://code.orgmode.org/bzg/org-mode.git
-;; cd org-mode
-;; git checkout maint (more stable than master)
-;; make autoloads
-(add-to-list 'load-path "~/packages/org-mode/lisp")
-(add-to-list 'load-path "~/packages/org-mode/contrib/lisp" t)
-
 (setq newsticker-url-list
       '(("EmacsWiki Recently Change" "http://www.emacswiki.org/cgi-bin/emacs?action=rss;showedit=1" nil nil nil)
         ("Devin Dooley" "https://devinadooley.com/index.xml" nil nil nil)
@@ -242,7 +228,7 @@
    '("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default))
  '(line-number-mode nil)
  '(package-selected-packages
-   '(htmlize php-mode dockerfile-mode company company-mode exec-path-from-shell spaceline spacemacs-theme use-package helm evil-visual-mark-mode)))
+   '(orgit htmlize php-mode dockerfile-mode company company-mode exec-path-from-shell spaceline spacemacs-theme use-package helm evil-visual-mark-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
